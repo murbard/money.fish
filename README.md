@@ -14,11 +14,11 @@ In order to determine clearing, the algorithm proceeds as follow:
 
 1. Sort all bids by descending price, resolve ties randomly
 2. Sort all asks by ascending price, resolve ties randomly
-3. Advance through both lists, element by element and stop just be fore the ask becomes greater than the bid
-4. Take the highest bid and the lowest ask and compute their average. If the average is not an integer
+3. Advance through both lists, element by element and stop just be fore the ask becomes greater than the bid, discard the rest
+4. Take the highest undiscarded bid and the lowest undiscarded ask and compute their average. If the average is not an integer
 randomly round up or down.
 
-Example:
+__Example__:
 
 Suppose the buy orders are for 110, 102, 104, 109
 and the sell orders for 99, 107, 105, 100, 110
