@@ -132,7 +132,6 @@ class Island(object):
             print(u, math.exp(-np.exp(self.theta)))
             while u < 1.0 - math.exp(-np.exp(self.theta)):
                 villager.fish += 1
-                villager.fish += 1
                 u = random.random()
             villager.available_fish = villager.fish
             print("%s has %d fish" % (villager.name, villager.fish))
