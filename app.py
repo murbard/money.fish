@@ -5,7 +5,7 @@ import os
 
 secret = os.environ['FISH_SECRET']
 
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_restful import Resource, Api
 
 app = Flask(__name__)
@@ -32,6 +32,10 @@ class Coordinator(Resource):
 
 api.add_resource(Coordinator, '/tick')
 
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 class Hello(Resource):
     """ For debugging purposes """
