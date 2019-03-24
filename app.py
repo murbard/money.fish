@@ -33,6 +33,12 @@ class Coordinator(Resource):
 api.add_resource(Coordinator, '/tick')
 
 
+class Hello(Resource):
+    """ For debugging purposes """
+    def get(self):
+        return {'hello':'world'}
+api.add_resource(Hello, '/hello')
+
 class Register(Resource):
     """ Register as a villager """
 
