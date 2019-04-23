@@ -57,7 +57,7 @@ class OrderBook(object):
             # flip a coin to determine clearing price
             if price % 2 != 0:
                 price = price + 2 * random.randint(0, 1) - 1
-                price = price / 2
+            price = price / 2
         else:
             price = None
         self.orders = []
