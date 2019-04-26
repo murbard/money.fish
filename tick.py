@@ -9,6 +9,8 @@ url = 'http://localhost:5000'
 requests.post(url + '/run',
               {'secret': secret, 'action': 'reset'})
 
+time.sleep(180)
+
 for i in range(0, 365):
     requests.post(url + '/run',
                   {'secret': secret, 'action': 'tick'})
