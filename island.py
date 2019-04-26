@@ -93,6 +93,7 @@ class Island(object):
         self.day = 0
         self.last_price = None
         self.last_quantity = None
+        self.stats = {}
 
     def register_villager(self, name):
         if name in self.villagers:
@@ -153,6 +154,9 @@ class Island(object):
             villager.shells += price
 
         # eat or leave
+        for name, villager in self.villagers.items():
+            self.stats[name] = self.day
+
         self.villagers = {name: villager for name, villager in self.villagers.items()
                           if villager.fish >= 2}
 

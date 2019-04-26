@@ -1,5 +1,5 @@
 import hashlib
-import island
+from island import Island
 import json
 import os
 
@@ -11,7 +11,7 @@ from flask_restful import Resource, Api
 app = Flask(__name__)
 api = Api(app)
 
-island = island.Island()
+app.island = Island()
 
 
 class Coordinator(Resource):
@@ -21,33 +21,54 @@ class Coordinator(Resource):
         if request.form['secret'] != secret:
             return {}, 401
 
-        if not island.started:
-            island.morning()
-            island.started = True
+        if request.form['action'] == 'tick':
+            if not app.island.started:
+                app.island.morning()
+                app.island.started = True
+            else:
+                app.island.evening()
+                app.island.morning()
+            return {'day':app.island.day}, 200
 
-        island.evening()
-        island.morning()
-        return {}, 200
+        if request.form['action'] == 'reset':
+            app.island = Island()
+            return {'day':app.island.day}, 200
 
 
-api.add_resource(Coordinator, '/tick')
+api.add_resource(Coordinator, '/run')
+
+class Stats(Resource):
+
+    def post(self):
+        if request.form['secret'] != secret:
+            return {}, 401
+
+        return app.island.stats, 200
+
+api.add_resource(Stats, '/stats')
+
 
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 class Hello(Resource):
     """ For debugging purposes """
+
     def get(self):
-        return {'hello':'world'}
+        return {'hello': 'world'}
+
+
 api.add_resource(Hello, '/hello')
+
 
 class Register(Resource):
     """ Register as a villager """
 
     def post(self):
-        if island.started:
+        if app.island.started:
             return {}, 403
 
         name = request.form['name']
@@ -62,7 +83,7 @@ class Register(Resource):
         if key != key_provided:
             return {}, 401
 
-        island.register_villager(key)
+        app.island.register_villager(key)
         return {'key': key}
 
 
@@ -73,17 +94,17 @@ class Info(Resource):
     """" Get information on the state of the island. """
 
     def get(self, key):
-        if key not in island.villagers:
+        if key not in app.island.villagers:
             return {}, 404
         return {
             key: {
-                'fish': island.get_fish(key),
-                'shells': island.get_shells(key)
+                'fish': app.island.get_fish(key),
+                'shells': app.island.get_shells(key)
             },
-            'villagers': len(island.villagers),
-            'day': island.day,
-            'last_price': island.last_price,
-            'last_quantity': island.last_quantity
+            'villagers': len(app.island.villagers),
+            'day': app.island.day,
+            'last_price': app.island.last_price,
+            'last_quantity': app.island.last_quantity
         }
 
 
@@ -96,7 +117,7 @@ class Order(Resource):
             shells = int(request.form['shells'])
         except:
             return {}, 400
-        if island.place_order(key, shells):
+        if app.island.place_order(key, shells):
             return {'shells': request.form['shells']}
         else:
             return {}, 403
